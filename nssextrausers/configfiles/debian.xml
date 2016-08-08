@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<froxlor>
+	<distribution name="Debian" codename="Jessie" version="8.x" defaulteditor="/usr/bin/nano">
+		<services>
+			<service type="system" title="{{lng.admin.configfiles.etc}}">
+				<daemon name="extrausers" title="libnss-extrausers (Plugin)">
+					<file name="/etc/nsswitch.conf" backup="true">
+						<content><![CDATA[
+# /etc/nsswitch.conf
+#
+# Make sure that `passwd`, `group` and `shadow` have extrausers in their lines 
+# IMPORTANT: Place extrausers at the end of the line, 
+#            so that it is queried after all other mechanisams!
+							
+passwd:         compat extrausers
+group:          compat extrausers
+shadow:         compat extrausers
+gshadow:        files
+
+hosts:          files dns
+networks:       files
+
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+
+netgroup:       nis
+
+]]>
+						</content>
+					</file>
+					<command><![CDATA[service apache2 restart]]></command>
+					<command><![CDATA[php {{const.FROXLOR_INSTALL_DIR}}/scripts/froxlor_master_cronjob.php --force]]></command>
+				</daemon>
+			</service>
+		</services>
+	</distribution>
+</froxlor>
